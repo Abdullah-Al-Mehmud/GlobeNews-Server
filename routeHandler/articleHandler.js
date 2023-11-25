@@ -14,6 +14,16 @@ router.get("/", async (req, res) => {
     res.status(400).send(e);
   }
 });
+
+router.get("/:id", async (req, res) => {
+  try {
+    const id = await Article.findById(req.params.id);
+    res.status(201).send(id);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const newArticle = new Article(req.body);
