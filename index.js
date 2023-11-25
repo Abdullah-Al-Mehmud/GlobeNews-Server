@@ -19,6 +19,7 @@ mongoose
 // application routes
 // articles routes
 app.use("/articles", articleHandler);
+// app.use("/users")
 
 app.use("/", (req, res) => {
   res.send("Globe News server");

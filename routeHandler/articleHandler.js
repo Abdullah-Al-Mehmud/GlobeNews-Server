@@ -6,7 +6,14 @@ const mongoose = require("mongoose");
 const Article = new mongoose.model("Article", articleSchema);
 
 // get api
-// router.get("/", async (req, res) => {});
+router.get("/", async (req, res) => {
+  try {
+    const articles = await Article.find({ status: "active" });
+    res.status(201).send(articles);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 router.post("/", async (req, res) => {
   try {
     const newArticle = new Article(req.body);

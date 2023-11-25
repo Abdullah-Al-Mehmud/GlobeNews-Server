@@ -25,6 +25,26 @@ const articleSchema = mongoose.Schema({
     type: String,
     // enum: ["active", "inactive"],
   },
+  authorName: {
+    type: String,
+    required: true,
+  },
+  authorEmail: {
+    type: String,
+    required: true,
+  },
+  authorImage: {
+    type: String,
+    required: true,
+  },
+  postedDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
+
+// authorName: user?.displayName,
+//           authorEmail: user?.email,
+//           authorImage: user?.photoURL,
 
 module.exports = articleSchema;
