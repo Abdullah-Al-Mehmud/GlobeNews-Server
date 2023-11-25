@@ -11,6 +11,7 @@ router.post("/", async (req, res) => {
   try {
     const newArticle = new Article(req.body);
     await newArticle.save();
+    res.status(201).send({ message: "added successfully ", success: true });
   } catch (e) {
     res.status(400).send(e);
   }
