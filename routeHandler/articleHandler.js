@@ -16,6 +16,10 @@ router.get("/", async (req, res) => {
       query = { authorEmail: req.query.authorEmail };
     }
 
+    if (req.query.tags) {
+      query.hashtags = { $in: req.query.tags.split(",") };
+    }
+
     const articles = await Article.find({
       ...query,
       title: { $regex: searchRegex },
@@ -27,6 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// get api by id
 router.get("/:id", async (req, res) => {
   try {
     const id = await Article.findById(req.params.id);
@@ -36,6 +41,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// post api
 router.post("/", async (req, res) => {
   try {
     const newArticle = new Article(req.body);
@@ -45,5 +51,18 @@ router.post("/", async (req, res) => {
     res.status(400).send(e);
   }
 });
+
+// // update api
+// router.put("/:id", async (req, res) => {
+//   try {
+//     await Article.updateOne({_id : req.params.id},{
+//       $set:{
+
+//       }
+//     })
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
 module.exports = router;
