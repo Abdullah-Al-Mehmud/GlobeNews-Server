@@ -8,8 +8,20 @@ const Article = new mongoose.model("Article", articleSchema);
 // get api
 router.get("/", async (req, res) => {
   try {
-    const articles = await Article.find({ status: "active" });
-    res.status(201).send(articles);
+    const search = req.query.search;
+    const searchRegex = new RegExp(search, "i");
+
+    let query = { status: "active" };
+    if (req.query.authorEmail) {
+      query = { authorEmail: req.query.authorEmail };
+    }
+
+    const articles = await Article.find({
+      ...query,
+      title: { $regex: searchRegex },
+    });
+
+    res.status(200).send(articles);
   } catch (e) {
     res.status(400).send(e);
   }

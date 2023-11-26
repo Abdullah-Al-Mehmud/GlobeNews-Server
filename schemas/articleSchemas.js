@@ -21,6 +21,9 @@ const articleSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  subscription: {
+    type: String,
+  },
   status: {
     type: String,
     // enum: ["active", "inactive"],
