@@ -9,6 +9,9 @@ const Article = new mongoose.model("Article", articleSchema);
 router.get("/", async (req, res) => {
   try {
     const search = req.query.search;
+    const tags = req.query.tags;
+    console.log("13", tags);
+    // const tagsArray = tags.map((tag) => ({ value: tag, label: tag }));
     const searchRegex = new RegExp(search, "i");
 
     let query = { status: "active" };
@@ -20,8 +23,12 @@ router.get("/", async (req, res) => {
       query.hashtags = { $in: req.query.tags.split(",") };
     }
 
+    // console.log(req.query.tags);
+    // console.log(query);
     const articles = await Article.find({
+      // hashtags: ,
       ...query,
+
       title: { $regex: searchRegex },
     });
 
@@ -53,16 +60,39 @@ router.post("/", async (req, res) => {
 });
 
 // // update api
-// router.put("/:id", async (req, res) => {
-//   try {
-//     await Article.updateOne({_id : req.params.id},{
-//       $set:{
+router.put("/:id", async (req, res) => {
+  try {
+    const { title, publisher, hashtags, description, image } = req.body;
+    console.log("61", req.body);
 
-//       }
-//     })
-//   } catch (error) {
-//     res.status(400).send(error);
-//   }
-// });
+    await Article.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          title,
+          publisher,
+          hashtags,
+          description,
+          image,
+        },
+      }
+    );
+    res.status(201).send({ message: "updated successfully ", success: true });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Article.deleteOne({ _id: id });
+    if (result.deletedCount === 1) {
+      res.status(201).send({ success: true });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 
 module.exports = router;
