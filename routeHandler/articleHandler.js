@@ -114,6 +114,29 @@ router.patch("/admin/:id", async (req, res) => {
   }
 });
 
+// decline article
+router.patch("/admin/decline/:id", async (req, res) => {
+  try {
+    const result = await Article.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          status: "decline",
+        },
+      }
+    );
+    if (result.modifiedCount === 1) {
+      res.status(201).send({
+        message: "updated successfully ",
+        success: true,
+        modifiedCount: result.modifiedCount,
+      });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 // make premium
 router.patch("/admin/premium/:id", async (req, res) => {
   try {
