@@ -9,9 +9,6 @@ const Article = new mongoose.model("Article", articleSchema);
 router.get("/", async (req, res) => {
   try {
     const search = req.query.search;
-    const tags = req.query.tags;
-    console.log("13", tags);
-    // const tagsArray = tags.map((tag) => ({ value: tag, label: tag }));
     const searchRegex = new RegExp(search, "i");
 
     let query = { status: "active" };
@@ -51,6 +48,8 @@ router.get("/:id", async (req, res) => {
 // post api
 router.post("/", async (req, res) => {
   try {
+    console.log("54", req.body);
+    // const hashtags = req.bo
     const newArticle = new Article(req.body);
     await newArticle.save();
     res.status(201).send({ message: "added successfully ", success: true });
@@ -65,7 +64,7 @@ router.put("/:id", async (req, res) => {
     const { title, publisher, hashtags, description, image } = req.body;
     console.log("61", req.body);
 
-    await Article.updateOne(
+    const result = await Article.updateOne(
       { _id: req.params.id },
       {
         $set: {
@@ -77,7 +76,13 @@ router.put("/:id", async (req, res) => {
         },
       }
     );
-    res.status(201).send({ message: "updated successfully ", success: true });
+    if (result.modifiedCount === 1) {
+      res.status(201).send({
+        message: "updated successfully ",
+        success: true,
+        modifiedCount: result.modifiedCount,
+      });
+    }
   } catch (error) {
     res.status(400).send(error);
   }
