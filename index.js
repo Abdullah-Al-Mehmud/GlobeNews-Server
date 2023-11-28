@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const articleHandler = require("./routeHandler/articleHandler");
 const feedbackHandler = require("./routeHandler/feedbackHandler");
 const usersHandler = require("./routeHandler/usersHandler");
+const publisherHandler = require("./routeHandler/publisherHandler");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ mongoose
 app.use("/articles", articleHandler);
 app.use("/feedback", feedbackHandler);
 app.use("/users", usersHandler);
+app.use("/publishers", publisherHandler);
 // app.use("/users")
 
 app.use("/", (req, res) => {

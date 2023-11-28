@@ -160,7 +160,7 @@ router.patch("/admin/premium/:id", async (req, res) => {
   }
 });
 
-// user delete
+// user can delete
 router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
