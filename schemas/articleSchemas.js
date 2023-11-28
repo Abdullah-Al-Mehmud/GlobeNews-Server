@@ -46,8 +46,4 @@ const articleSchema = mongoose.Schema({
   },
 });
 
-// authorName: user?.displayName,
-//           authorEmail: user?.email,
-//           authorImage: user?.photoURL,
-
 module.exports = articleSchema;

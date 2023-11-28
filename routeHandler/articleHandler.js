@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 const Article = new mongoose.model("Article", articleSchema);
 
-// get api
+// get active articles api and can search articles
 router.get("/", async (req, res) => {
   try {
     const search = req.query.search;
@@ -16,20 +16,23 @@ router.get("/", async (req, res) => {
       query = { authorEmail: req.query.authorEmail };
     }
 
-    if (req.query.tags) {
-      query.hashtags = { $in: req.query.tags.split(",") };
-    }
-
-    // console.log(req.query.tags);
-    // console.log(query);
     const articles = await Article.find({
-      // hashtags: ,
       ...query,
 
       title: { $regex: searchRegex },
     });
 
     res.status(200).send(articles);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// get all article for admin
+router.get("/admin/allArticles", async (req, res) => {
+  try {
+    const allArticles = await Article.find();
+    res.status(200).send(allArticles);
   } catch (e) {
     res.status(400).send(e);
   }
@@ -45,7 +48,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// post api
+// post article api
 router.post("/", async (req, res) => {
   try {
     console.log("54", req.body);
@@ -58,7 +61,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// // update api
+// // update article api
 router.put("/:id", async (req, res) => {
   try {
     const { title, publisher, hashtags, description, image } = req.body;
@@ -88,10 +91,70 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// approve article
+router.patch("/admin/:id", async (req, res) => {
+  try {
+    const result = await Article.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          status: "active",
+        },
+      }
+    );
+    if (result.modifiedCount === 1) {
+      res.status(201).send({
+        message: "updated successfully ",
+        success: true,
+        modifiedCount: result.modifiedCount,
+      });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// make premium
+router.patch("/admin/premium/:id", async (req, res) => {
+  try {
+    const result = await Article.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          subscription: "premium",
+        },
+      }
+    );
+    if (result.modifiedCount === 1) {
+      res.status(201).send({
+        message: "updated successfully ",
+        success: true,
+        modifiedCount: result.modifiedCount,
+      });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// user delete
 router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const result = await Article.deleteOne({ _id: id });
+    if (result.deletedCount === 1) {
+      res.status(201).send({ success: true });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// admin article delete
+router.delete("/admin/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    result = await Article.deleteOne({ _id: id });
     if (result.deletedCount === 1) {
       res.status(201).send({ success: true });
     }
