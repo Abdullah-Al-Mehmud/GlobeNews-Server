@@ -14,6 +14,46 @@ router.get("/", async (req, res) => {
     res.status(400).send(e);
   }
 });
+
+// making admin
+router.get("/admin/:email", async (req, res) => {
+  try {
+    const useEmail = req.params.email;
+    const query = { email: useEmail };
+
+    const user = await User.findOne(query);
+    let admin = false;
+    if (user) {
+      admin = user?.role === "admin";
+      res.status(200).send({ admin });
+    } else {
+      return res.status(400).send({ message: "admin not found" });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+// making premium
+// getting data
+router.get("/premium/:email", async (req, res) => {
+  try {
+    const useEmail = req.params.email;
+    const query = { email: useEmail };
+
+    const user = await User.findOne(query);
+    let premium = false;
+    if (user) {
+      premium = user?.isPremium === "premium";
+      res.status(200).send({ premium });
+    } else {
+      return res.status(400).send({ message: "premium not found" });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 // post user
 router.post("/", async (req, res) => {
   try {
