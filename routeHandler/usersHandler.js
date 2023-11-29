@@ -67,6 +67,45 @@ router.post("/", async (req, res) => {
   }
 });
 
+// adding subscription
+
+router.patch("/:id", async (req, res) => {
+  try {
+    const { premiumTaken } = req.body;
+
+    if (!premiumTaken) {
+      return res
+        .status(400)
+        .json({ error: "premiumTaken is required in the request body" });
+    }
+
+    const result = await User.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          premiumTaken: new Date(premiumTaken),
+        },
+      }
+    );
+
+    if (result.modifiedCount === 1) {
+      res.status(200).send({
+        message: "updated successfully ",
+        success: true,
+        modifiedCount: result.modifiedCount,
+      });
+    } else {
+      res.status(400).send({
+        message: "Document not found or not modified",
+        success: false,
+        modifiedCount: result.modifiedCount,
+      });
+    }
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 // patch
 router.patch("/:id", async (req, res) => {
   try {

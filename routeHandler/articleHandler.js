@@ -7,6 +7,7 @@ const Article = new mongoose.model("Article", articleSchema);
 
 // get active articles api and can search articles
 router.get("/", async (req, res) => {
+  const { trending } = req.query;
   try {
     const search = req.query.search;
     const searchRegex = new RegExp(search, "i");
@@ -15,7 +16,13 @@ router.get("/", async (req, res) => {
     if (req.query.authorEmail) {
       query = { authorEmail: req.query.authorEmail };
     }
+    if (trending === "true") {
+      const trendingQuery = await Article.find(query)
+        .sort({ viewCount: -1 })
+        .limit(6);
 
+      return res.status(200).send(trendingQuery);
+    }
     const articles = await Article.find({
       ...query,
 
@@ -43,19 +50,6 @@ router.get("/:id", async (req, res) => {
   try {
     const id = await Article.findById(req.params.id);
     res.status(201).send(id);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-
-// get trending articles
-router.get("/trending", async (req, res) => {
-  try {
-    const trendingArticles = await Article.find()
-      .sort({ viewCount: -1 })
-      .limit(6);
-
-    res.status(200).send(trendingArticles);
   } catch (e) {
     res.status(400).send(e);
   }

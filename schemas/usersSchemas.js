@@ -19,6 +19,9 @@ const usersSchema = mongoose.Schema({
   isPremium: {
     type: String,
   },
+  premiumTaken: {
+    type: Date,
+  },
 });
 
 module.exports = usersSchema;
