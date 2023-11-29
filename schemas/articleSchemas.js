@@ -24,6 +24,10 @@ const articleSchema = mongoose.Schema({
   subscription: {
     type: String,
   },
+  viewCount: {
+    type: Number,
+    default: 0,
+  },
   status: {
     type: String,
     // enum: ["active", "inactive"],

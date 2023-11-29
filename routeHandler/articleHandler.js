@@ -48,6 +48,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// get trending articles
+router.get("/trending", async (req, res) => {
+  try {
+    const trendingArticles = await Article.find()
+      .sort({ viewCount: -1 })
+      .limit(6);
+
+    res.status(200).send(trendingArticles);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 // post article api
 router.post("/", async (req, res) => {
   try {
@@ -88,6 +101,29 @@ router.put("/:id", async (req, res) => {
     }
   } catch (error) {
     res.status(400).send(error);
+  }
+});
+
+// view count
+router.patch("/viewCount/:id", async (req, res) => {
+  try {
+    const articleId = req.params.id;
+    const updatedArticle = await Article.findByIdAndUpdate(
+      articleId,
+      {
+        $inc: {
+          viewCount: 1,
+        },
+      },
+      { new: true }
+    );
+    if (!updatedArticle) {
+      return res.status(404).json({ error: "Article not found" });
+    }
+
+    res.json({ success: true, viewCount: updatedArticle.viewCount });
+  } catch (e) {
+    res.status(400).send(e);
   }
 });
 
